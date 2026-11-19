@@ -1,0 +1,24 @@
+* text=auto eol=lf
+
+*.sh            text eol=lf
+*.yml           text eol=lf
+*.yaml          text eol=lf
+Dockerfile      text eol=lf
+
+# Binary / large assets (release artifacts, never committed by default).
+*.png           binary
+*.jpg           binary
+*.jpeg          binary
+*.webp          binary
+*.ico           binary
+*.woff          binary
+*.woff2         binary
+*.ttf           binary
+*.gz            binary
+*.tar.gz        binary
+*.map           binary
+*.zip           binary
+
+# The built distribution is an external artifact, not repository source.
+# Keep it out of language stats and git archive should it ever be present.
+dist/**         -text linguist-vendored export-ignore

@@ -1,0 +1,14 @@
+# Optional TLS override. Generates nothing: provide ./certs/localhost.crt
+# and ./certs/localhost.key (self-signed is fine for local use), then:
+#
+#   docker compose -f docker-compose.yml -f docker-compose.tls.yml up -d
+#
+# HTTP :8094 stays available; TLS is exposed on :8092 -> :8443.
+
+services:
+  ui:
+    volumes:
+      - ./nginx/nginx-tls.conf:/etc/nginx/tls.d/8443.conf:ro
+      - ./certs:/etc/nginx/certs:ro
+    ports:
+      - "${UI_TLS_PORT:-8092}:8443"

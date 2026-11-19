@@ -1,0 +1,48 @@
+name: release-image
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Image tag, e.g. 0.3831.0-themes.1"
+        required: true
+        default: "0.3831.0-themes.1"
+      dist_url:
+        description: "Optional dist.tar.gz URL to bake into the image"
+        required: false
+        default: ""
+      dist_sha256:
+        description: "Optional SHA-256 of dist.tar.gz"
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/setup-buildx-action@v3
+
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push runtime image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ghcr.io/${{ github.repository_owner }}/datalens-ui-crab:${{ inputs.version }}
+          build-args: |
+            DIST_URL=${{ inputs.dist_url }}
+            DIST_SHA256=${{ inputs.dist_sha256 }}
+          labels: |
+            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+            org.opencontainers.image.revision=${{ github.sha }}

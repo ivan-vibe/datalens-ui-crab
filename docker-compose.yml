@@ -1,0 +1,60 @@
+# DataLens Theme Fork UI — standalone runtime.
+#
+#   1. cp .env.example .env   &&   edit endpoints / tokens
+#   2. ./scripts/fetch-dist.sh <release-tag>   # fills ./dist (not in git)
+#   3. docker compose up -d --build            # http://127.0.0.1:8094
+#
+# The fork is served next to the official UI (:8091) and proxies chart
+# requests to the Rust monolith on the Docker host at :8099.
+
+services:
+  ui:
+    image: "${UI_IMAGE:-ghcr.io/ivan-vibe/datalens-ui-crab:0.3831.0-themes.1}"
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        BASE_IMAGE: "${BASE_IMAGE:-ghcr.io/datalens-tech/datalens-ui:0.3831.0@sha256:5c720832463cc54c43307a9aeafb8f881fb54facc548edac35efb8ccfe327b0f}"
+        DIST_URL: "${DIST_URL:-}"
+        DIST_SHA256: "${DIST_SHA256:-}"
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      THEMES_DATA_DIR: /opt/app/theme-data
+      THEMES_DATA_PATH: /opt/app/theme-data/themes.json
+    volumes:
+      # Built UI assets: release asset, never committed (see PUBLISH.md).
+      - ./dist:/opt/app/dist:ro
+      # Writable JSON theme store. A named volume inherits app ownership, so
+      # it works without host-side chown; seeded from theme-data.example/.
+      - theme-data:/opt/app/theme-data
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    extra_hosts:
+      # Linux Docker needs this; Docker Desktop provides it already.
+      - "host.docker.internal:host-gateway"
+    ports:
+      - "${UI_PORT:-8094}:8080"
+    restart: unless-stopped
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - >-
+          node -e "fetch('http://127.0.0.1:8080/robots.txt')
+          .then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+
+volumes:
+  theme-data:
+
+# The original deployment joins the external datalens-native_v92_net network.
+# That is not required here: all backend traffic goes through the host proxy
+# on :8099. To join an existing stack network, uncomment:
+#
+# networks:
+#   default:
+#     name: datalens-native_v92_net
+#     external: true

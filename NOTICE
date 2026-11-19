@@ -1,0 +1,42 @@
+DataLens UI Theme Fork
+Copyright 2026 Ivan
+
+This product includes software developed by Yandex LLC and the DataLens
+contributors.
+
+Upstream project:
+  DataLens UI (datalens-tech/datalens-ui)
+  https://github.com/datalens-tech/datalens-ui
+  Copyright 2023 YANDEX LLC
+  Licensed under the Apache License, Version 2.0 (see LICENSE).
+
+Upstream version used as the base image:
+  ghcr.io/datalens-tech/datalens-ui:0.3831.0
+  digest sha256:5c720832463cc54c43307a9aeafb8f881fb54facc548edac35efb8ccfe327b0f
+
+This repository distributes a modified build of the DataLens UI (a
+"distribution", not the upstream source tree). Modifications made by the
+fork maintainers include:
+
+  - Theme Studio: theme model, editor, Gravity UI theme importer/exporter,
+    preview, gallery, per-user theme assignment, applier at UI startup;
+  - server-side JSON theme store and /api/themes* routes;
+  - light/dark/high-contrast (four-variant) theme variable generation and
+    dashboard border-radius propagation;
+  - client-side batch and NDJSON streaming chart loading with fallback,
+    request coalescing and entry/JS prefetch;
+  - the nginx routing for /api/run, /api/run/batch and
+    /api/run/batch/stream to the Rust monolith.
+
+No NOTICE file was present in the upstream snapshot used for this packaging;
+this NOTICE is added by the fork maintainers to preserve attribution as
+required by Section 4 of the Apache License, Version 2.0.
+
+Third-party components:
+  The built UI assets contain open-source libraries (React, Gravity UI,
+  Monaco Editor and others) under their own licenses. Highcharts is not
+  bundled; it is loaded at runtime from HC_ENDPOINT (default:
+  code.highcharts.com) and is governed by the Highcharts license.
+
+"DataLens" is a project of its respective owners. This repository is an
+independent fork and is not an official DataLens distribution.

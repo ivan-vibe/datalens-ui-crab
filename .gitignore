@@ -1,0 +1,25 @@
+# Built UI assets are distributed as a GitHub Release asset / OCI image,
+# never committed: 102 MB of static files, ~78 MB of them source maps.
+dist/*
+!dist/.gitkeep
+
+# Runtime theme store (seeded from theme-data.example/).
+theme-data/*
+!theme-data/.gitkeep
+
+# Local configuration and secrets.
+.env
+.env.*
+!.env.example
+
+# Local TLS certs and generated release artifacts.
+certs/
+release/
+*.tar.gz
+
+# OS / editor noise.
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.log

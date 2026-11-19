@@ -1,0 +1,10 @@
+.git
+.github
+dist
+theme-data
+certs
+release
+.env
+*.tar.gz
+*.log
+.DS_Store
