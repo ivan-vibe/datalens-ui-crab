@@ -100,7 +100,13 @@ docker compose down
   на текущем стенде все указывают на `http://host.docker.internal:8099`;
 - `AUTH_ENDPOINT` — на стенде `http://host.docker.internal:8097`;
 - `AUTH_MASTER_TOKEN`, `AUTH_TOKEN_PUBLIC_KEY`, `US_DYNAMIC_MASTER_TOKEN_PRIVATE_KEY` —
-  значения берутся из вашего deployment-окружения, в репозитории их нет.
+  значения берутся из вашего deployment-окружения, в репозитории их нет;
+- `US_MASTER_TOKEN` — **обязателен**: это `MASTER_TOKEN`/`US_MASTER_TOKEN` бэкенда, UI
+  отправляет его как `x-us-master-token` в `/private/*`. Без него вход проходит, но
+  каждая страница отвечает HTTP 500 (`Private API call denied`).
+
+PEM-ключ в `.env` должен сохранять переводы строк: в `env_file` значение разворачивается
+только в двойных кавычках — `AUTH_TOKEN_PUBLIC_KEY="-----BEGIN PUBLIC KEY-----\nMIIB…"`.
 
 `host.docker.internal` добавляется через `extra_hosts: host-gateway`, поэтому схема
 работает и на Linux, и на Docker Desktop.
